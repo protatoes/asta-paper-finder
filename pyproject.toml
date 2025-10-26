@@ -4,6 +4,11 @@ version = "0.1.0"
 requires-python = ">=3.12.8"
 readme = "README.md"
 dependencies = [
+    "crewai>=0.60,<0.70",
+    "langchain>=0.2.16,<0.3",
+    "langchain-core>=0.2.30,<1",
+    "langchain-openai>=0.1.7,<0.2",
+    "pydantic>=2.6,<3",
 ]
 
 [tool.uv]
@@ -44,6 +49,9 @@ members = [
   "agents/mabool/api",
   "libs/*"
 ]
+
+[tool.setuptools.packages.find]
+include = ["agents*", "libs*"]
 
 [tool.pyright]
 pythonVersion = "3.12"
