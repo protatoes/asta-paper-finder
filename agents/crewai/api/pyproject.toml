@@ -1,0 +1,184 @@
+[project]
+name = "paperfinder-crew"
+version = "0.1.0"
+requires-python = ">=3.12.8"
+readme = "../README.md"
+description = "Paper Finder CrewAI implementation - side-by-side with mabool"
+dependencies = [
+    # CrewAI core
+    "crewai>=0.86.0",
+    "crewai-tools>=0.17.0",
+
+    # ai2i libraries (preserved from mabool)
+    "ai2i-chain",
+    "ai2i-common",
+    "ai2i-config",
+    "ai2i-dcollection",
+    "ai2i-di",
+
+    # LLM and AI libraries
+    "langchain>=0.3.22",
+    "langchain-community>=0.3.20",
+    "langchain-core>=0.3.60",
+    "langchain-openai>=0.2.0",  # For OpenAI integration
+
+    # External APIs
+    "semanticscholar",
+    "cohere>=5.13.4",
+
+    # Data handling
+    "pydantic>=2.10.4",
+    "pandas>=2.2.3",
+
+    # Utilities
+    "cachetools>=5.5.0",
+    "tenacity>=9.1.2",
+    "anyio>=4.6.2",
+
+    # Web framework (for API integration later)
+    "fastapi>=0.115.6",
+    "uvicorn>=0.34.0",
+    "starlette>=0.41.0",
+
+    # Storage and caching
+    "aiocache>=0.12.3",
+
+    # Other utilities
+    "python-dotenv>=1.0.0",  # For environment variable management
+]
+
+[tool.uv]
+default-groups = ["types", "test", "tools"]
+
+[tool.uv.sources]
+# Workspace dependencies (from root pyproject.toml)
+ai2i-common = { workspace = true }
+ai2i-chain = { workspace = true }
+ai2i-config = { workspace = true }
+ai2i-dcollection = { workspace = true }
+ai2i-di = { workspace = true }
+semanticscholar = { git = "https://github.com/allenai/s2-api-client.git" }
+
+[dependency-groups]
+types = [
+    "types-cachetools>=5.5.0",
+    "types-requests>=2.31.0",
+    "types-pyyaml>=6.0.12",
+    "pandas-stubs>=2.2.3",
+]
+
+test = [
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.0",
+    "pytest-cov>=6.0.0",
+    "pytest-env>=1.1.5",
+    "pytest-xdist>=3.6.1",
+    "pytest-mock>=3.14.0",
+    "pytest-timeout>=2.3.0",
+    "asgi-lifespan>=2.1.0",
+]
+
+tools = [
+    "ruff>=0.8.4",
+    "pyright>=1.1.398",
+    "deptry>=0.23.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow tests",
+    "requires_api: Tests requiring external API access",
+]
+
+[tool.pytest-env]
+# Environment variables for testing
+S2_API_KEY = "test-key"
+OPENAI_API_KEY = "test-key"
+COHERE_API_KEY = "test-key"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["paperfinder_crew"]
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "standard"
+reportMatchNotExhaustive = true
+exclude = [
+    ".venv",
+    "**/__pycache__",
+    "**/node_modules",
+]
+
+[tool.coverage.run]
+source = ["paperfinder_crew"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/conftest.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+
+[tool.deptry]
+extend_exclude = [
+    ".*\\/test_.*\\.py",
+    ".*conftest.py",
+]
+
+[tool.deptry.per_rule_ignores]
+DEP002 = [
+    "ai2i-chain",
+    "ai2i-common",
+    "ai2i-config",
+    "ai2i-dcollection",
+    "ai2i-di",
+]
+DEP003 = ["ai2i"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["paperfinder_crew"]

@@ -31,6 +31,7 @@ tools = [
 
 [tool.uv.sources]
 mabool-api = { workspace = true }
+paperfinder-crew = { workspace = true }
 ai2i-common = { workspace = true }
 ai2i-chain = { workspace = true }
 ai2i-config = { workspace = true }
@@ -42,6 +43,7 @@ mabwiser = { git = "https://github.com/allenai/mabwiser.git" }
 [tool.uv.workspace]
 members = [
   "agents/mabool/api",
+  "agents/crewai/api",
   "libs/*"
 ]
 
