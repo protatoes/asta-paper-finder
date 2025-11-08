@@ -7,7 +7,7 @@ CrewAI tools for filtering, judging relevance, ranking, and processing papers.
 import json
 from typing import Any
 
-from crewai_tools import tool
+from crewai.tools import tool
 
 
 @tool("Filter papers by metadata criteria")

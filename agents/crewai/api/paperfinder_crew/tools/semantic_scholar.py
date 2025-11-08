@@ -9,7 +9,7 @@ import json
 import os
 from typing import Any
 
-from crewai_tools import tool
+from crewai.tools import tool
 from ai2i.dcollection import DocumentCollectionFactory, DocumentCollection
 
 

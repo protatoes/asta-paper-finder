@@ -1,24 +1,22 @@
 # Current Session State - Paper Finder CrewAI Migration
 
-**Session Date**: 2025-11-05
-**Session Number**: 002
-**Current Phase**: Phase 1 - Foundation
-**Focus**: Setting up infrastructure and implementing core tools
+**Session Date**: 2025-11-08
+**Session Number**: 003 (continuation from 002)
+**Current Phase**: Phase 1 - Foundation (Review & Completion)
+**Focus**: Code review, bug fixes, and completing Phase 1
 
 ---
 
-## Today's Goals (Session 002 - Phase 1)
+## Today's Goals (Session 003 - Phase 1 Review)
 
-- [x] Update SESSION.md for Phase 1 start
-- [x] Create pyproject.toml with CrewAI dependencies
-- [x] Install dependencies and verify setup (uv sync successful!)
-- [x] Implement core Semantic Scholar tools (6 tools implemented!)
-- [x] Implement document processing tools (8 tools implemented!)
-- [x] Set up testing infrastructure
-- [x] Write tests for implemented tools (comprehensive test suite!)
-- [ ] Run tests successfully
-- [ ] Update PROGRESS.md with completed tasks
-- [ ] Commit and document Phase 1 progress
+- [x] Review Phase 1 implementation for errors
+- [x] Fix import errors (crewai_tools → crewai.tools)
+- [x] Fix test calling pattern (direct calls → .run() method)
+- [x] Fix test assertion error (test_filter_papers_by_year)
+- [x] Verify all tests pass (16/16 tests passing!)
+- [x] Update SESSION.md with review findings
+- [x] Update PROGRESS.md to reflect completion
+- [ ] Commit Phase 1 with all fixes
 
 ---
 
@@ -38,7 +36,74 @@
 
 ---
 
-## Recent Accomplishments (Session 002 - Phase 1)
+## Recent Accomplishments (Session 003 - Phase 1 Review)
+
+### Code Review & Bug Fixes ✅
+
+**Errors Found and Fixed**:
+
+1. **Import Error - crewai_tools module** ✅
+   - **Error**: `ImportError: cannot import name 'tool' from 'crewai_tools'`
+   - **Root Cause**: Used `from crewai_tools import tool` but correct import is `from crewai.tools import tool`
+   - **Files Fixed**:
+     - `paperfinder_crew/tools/semantic_scholar.py`
+     - `paperfinder_crew/tools/document_processing.py`
+   - **Verification**: `python -c "from crewai.tools import tool; print('✓')"` succeeded
+
+2. **Test Calling Pattern Error** ✅
+   - **Error**: Tests failing because CrewAI Tool objects cannot be called directly
+   - **Root Cause**: `@tool` decorator wraps functions into Tool objects that need `.run()` method
+   - **Fix**: Updated all 16 test functions to use `.run(param_name=value)` pattern
+   - **Example**:
+     - Before: `filter_papers(sample_papers_json, year_range="2017-2020")`
+     - After: `filter_papers.run(papers_json=sample_papers_json, year_range="2017-2020")`
+   - **Files Fixed**: `test_document_processing.py` (all test functions)
+
+3. **Test Assertion Error** ✅
+   - **Error**: `AssertionError: assert 3 == 4` in `test_filter_papers_by_year`
+   - **Root Cause**: Test expected 4 papers but only 3 match range 2017-2020
+   - **Data Analysis**: Sample years are 2017, 2019, 2020, 2021, 2010
+     - Years 2017-2020 (inclusive): 2017, 2019, 2020 = 3 papers
+   - **Fix**: Changed assertion from `assert len(papers) == 4` to `assert len(papers) == 3`
+   - **Files Fixed**: `test_document_processing.py:25`
+
+### Testing Results ✅
+
+**All Tests Passing**: 16/16 tests (100%)
+
+```bash
+$ cd agents/crewai/api && uv run pytest paperfinder_crew/tests/test_tools/test_document_processing.py -v
+
+test_filter_papers_by_year PASSED
+test_filter_papers_by_venue PASSED
+test_filter_papers_by_citations PASSED
+test_filter_papers_by_author PASSED
+test_filter_papers_by_combined PASSED
+test_deduplicate_papers PASSED
+test_sort_papers_by_citations PASSED
+test_sort_papers_by_year_ascending PASSED
+test_take_top_papers PASSED
+test_combine_papers PASSED
+test_combine_papers_with_deduplication PASSED
+test_extract_corpus_ids PASSED
+test_count_papers PASSED
+test_get_paper_statistics PASSED
+test_empty_papers_list PASSED
+test_invalid_json PASSED
+
+======================== 16 passed ========================
+```
+
+### Key Learnings ✅
+
+1. **CrewAI Import Pattern**: Always use `from crewai.tools import tool`, NOT `from crewai_tools import tool`
+2. **Tool Calling Pattern**: CrewAI tools are objects with `.run()` method, not direct callable functions
+3. **Parameter Naming**: Must use named parameters with `.run()` method: `.run(param_name=value)`
+4. **Testing Environment**: Use `uv run pytest` to access project dependencies, not standalone pytest
+
+---
+
+## Previous Session Accomplishments (Session 002 - Phase 1)
 
 ### Infrastructure Setup ✅
 - Created `agents/crewai/api/pyproject.toml` with all dependencies
@@ -378,15 +443,63 @@ crew = Crew(
 
 ### CrewAI Concepts Learned
 
-*To be filled as we work with CrewAI*
+1. **Tool Decorator** (`@tool`)
+   - Wraps functions into CrewAI `Tool` objects
+   - Tool objects are NOT directly callable
+   - Must use `.run(param_name=value)` method to invoke
+   - Supports both sync and async functions
+   - Requires comprehensive docstrings (used by agents to understand tool purpose)
+
+2. **Import Structure**
+   - Correct: `from crewai.tools import tool`
+   - Incorrect: `from crewai_tools import tool` (module exists but doesn't export `tool`)
+
+3. **Tool Design Best Practices**
+   - Return strings (especially JSON strings) for easy agent consumption
+   - Handle errors gracefully - return empty/default values instead of raising
+   - Provide detailed docstrings with Args, Returns, and Example sections
+   - Use type hints for all parameters
 
 ### Patterns Discovered
 
-*To be filled as we discover patterns*
+1. **JSON as Tool Return Format**
+   - Tools should return JSON strings for structured data
+   - Agents can easily parse and work with JSON
+   - Allows for complex data structures while maintaining string compatibility
+
+2. **Helper Functions for Tool Implementation**
+   - Use private helper functions (e.g., `_get_factory()`, `_docs_to_json()`)
+   - Keeps tool functions clean and focused
+   - Reusable across multiple tools
+
+3. **Testing CrewAI Tools**
+   - Always use `tool_name.run(param=value)` in tests
+   - Cannot import and call tool functions directly
+   - Use `uv run pytest` to access project dependencies
 
 ### Gotchas & Tips
 
-*To be filled with tips and tricks*
+**⚠️ GOTCHA #1: Tool Calling**
+- **Don't**: `result = filter_papers(papers_json, year_range="2017-2020")`
+- **Do**: `result = filter_papers.run(papers_json=papers_json, year_range="2017-2020")`
+
+**⚠️ GOTCHA #2: Import Path**
+- **Don't**: `from crewai_tools import tool`
+- **Do**: `from crewai.tools import tool`
+
+**⚠️ GOTCHA #3: Testing Environment**
+- **Don't**: Run `pytest` directly (uses isolated pytest installation)
+- **Do**: Use `uv run pytest` to access project dependencies
+
+**💡 TIP #1: Error Handling in Tools**
+- Return empty/default values instead of raising exceptions
+- Example: Return `json.dumps([])` for empty results instead of raising
+- Makes tools more robust for agent use
+
+**💡 TIP #2: Async vs Sync Tools**
+- Use `async def` for I/O-bound operations (API calls, database queries)
+- Use regular `def` for CPU-bound operations (filtering, sorting, calculations)
+- CrewAI handles both seamlessly
 
 ---
 
