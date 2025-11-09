@@ -1,13 +1,25 @@
 # Current Session State - Paper Finder CrewAI Migration
 
 **Session Date**: 2025-11-08
-**Session Number**: 003 (continuation from 002)
-**Current Phase**: Phase 1 - Foundation (Review & Completion)
-**Focus**: Code review, bug fixes, and completing Phase 1
+**Session Number**: 004
+**Current Phase**: Phase 2 - Simple Agents
+**Focus**: Planning Phase 2 implementation - SpecificPaperByTitleAgent, SpecificPaperByNameAgent, MetadataOnlyAgent
 
 ---
 
-## Today's Goals (Session 003 - Phase 1 Review)
+## Today's Goals (Session 004 - Phase 2 Planning)
+
+- [x] Create comprehensive Phase 2 planning document (PHASE2_PLAN.md)
+- [x] Update SESSION.md for Phase 2 start
+- [x] Update PROGRESS.md for Phase 2 kickoff
+- [ ] Review mabool agent implementations for reference
+- [ ] Begin implementing first agent (SpecificPaperByTitleAgent)
+
+---
+
+## Previous Session Goals
+
+### Session 003 - Phase 1 Review
 
 - [x] Review Phase 1 implementation for errors
 - [x] Fix import errors (crewai_tools → crewai.tools)
@@ -24,19 +36,64 @@
 
 ### What We're Doing Now
 
-**Task**: Phase 1 - Foundation (Setting up infrastructure and core tools)
+**Task**: Phase 2 - Simple Agents (Planning and preparation)
 
 **Context**:
-- Starting implementation of CrewAI migration
-- Phase 1 focuses on infrastructure and foundational tools
-- Will implement Semantic Scholar tools and document processing tools
-- Need to set up dependencies, testing, and documentation
+- Phase 1 is complete with all tools implemented and tested
+- Phase 2 focuses on implementing 3 simple, focused agents:
+  1. SpecificPaperByTitleAgent - Find papers by exact/near-exact title
+  2. SpecificPaperByNameAgent - Find papers by common names (BERT, AlexNet, etc.)
+  3. MetadataOnlyAgent - Filter papers by metadata only (venue, year, domain)
+- These agents will establish patterns for more complex agents in later phases
 
-**Current Step**: Updating documentation and preparing to commit Phase 1 work
+**Current Step**: Created PHASE2_PLAN.md with comprehensive implementation plan
+
+**Next Steps**:
+1. Review mabool agent implementations to understand business logic
+2. Decide if additional tools are needed (aggregation, title matching)
+3. Implement first agent (SpecificPaperByTitleAgent)
+4. Create task definitions
+5. Build test infrastructure for agents
 
 ---
 
-## Recent Accomplishments (Session 003 - Phase 1 Review)
+## Recent Accomplishments (Session 004 - Phase 2 Planning)
+
+### Planning Documents Created ✅
+
+**PHASE2_PLAN.md** - Comprehensive Phase 2 implementation plan created:
+- **Agent Specifications**: Detailed specs for all 3 agents with roles, goals, backstories
+- **Tools Analysis**: Identified existing tools from Phase 1 that can be reused
+- **Implementation Strategy**: 7-step approach with time estimates
+- **Input/Output Schemas**: Pydantic models for all agent inputs and outputs
+- **Task Definitions**: Complete task templates with descriptions and expected outputs
+- **Testing Strategy**: Unit, integration, and E2E test plans
+- **Success Criteria**: Clear metrics for Phase 2 completion
+- **Timeline Estimate**: 18-29 hours (~2-4 days)
+- **Risk Assessment**: Low-medium risk with mitigation strategies
+- **Open Questions**: Tool selection, output format, testing approach
+
+### Key Decisions Made
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Agent Selection | SpecificPaperByTitle, SpecificPaperByName, MetadataOnly | Simple, focused, essential functionality |
+| Tool Reuse | Use Phase 1 tools where possible | Most needed tools already exist |
+| Output Format | Pydantic models (convert to JSON when needed) | Type safety + flexibility |
+| Testing Approach | Both mocks and real API tests | Unit tests fast, integration tests realistic |
+| LLM vs Tools | Start with LLM reasoning, add tools if needed | Simpler, let CrewAI agents use intelligence |
+
+### Documentation Updates ✅
+
+- **SESSION.md**: Updated for Phase 2 start (Session 004)
+- **PHASE2_PLAN.md**: Created comprehensive 600+ line planning document
+- **Todo List**: Created with 9 tasks to track Phase 2 progress
+
+---
+
+## Previous Session Accomplishments
+
+### Session 003 - Phase 1 Review
 
 ### Code Review & Bug Fixes ✅
 
